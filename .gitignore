@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.env
+.env.local
+.DS_Store
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+cloudfunctions/functions/api/node_modules/
+cloudfunctions/functions/api/.env.local
+.claude/
+src/data/articles/
+src/data/photography/

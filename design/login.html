@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>管理员登录 — My Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 17px; }
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: #faf8f5; color: #2c2416; line-height: 1.7;
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,248,245,0.88); backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e8e0d5; padding: 0.75rem 1.5rem;
+  }
+  .nav-inner {
+    max-width: 860px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .home-link { text-decoration: none; color: #6b5e4a; font-size: 0.92rem; transition: color 0.2s; }
+  .home-link:hover { color: #b8753e; }
+
+  /* ── Login Card ── */
+  .login-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem 1.5rem; }
+  .login-card {
+    background: #ffffff; border: 1px solid #ebe5d9; border-radius: 6px;
+    padding: 2.5rem 2rem; width: 100%; max-width: 380px;
+    box-shadow: 0 2px 12px rgba(60,40,20,0.05);
+  }
+  .login-title { font-size: 1.15rem; font-weight: 600; text-align: center; margin-bottom: 0.3rem; color: #2c2416; }
+  .login-subtitle { font-size: 0.85rem; text-align: center; color: #9a8b72; margin-bottom: 2rem; }
+
+  /* Form */
+  .form-group { margin-bottom: 1.15rem; }
+  .form-label { display: block; font-size: 0.82rem; color: #6b5e4a; margin-bottom: 0.3rem; }
+  .form-input {
+    width: 100%; padding: 0.6rem 0.75rem;
+    border: 1px solid #d4cac0; border-radius: 3px;
+    font-family: inherit; font-size: 0.92rem; color: #2c2416;
+    background: #fdfcfa; transition: border-color 0.2s;
+  }
+  .form-input:focus { outline: none; border-color: #b8753e; box-shadow: 0 0 0 2px rgba(184,117,62,0.1); }
+
+  .form-submit {
+    width: 100%; background: #b8753e; color: #fff; border: none;
+    padding: 0.6rem 0; border-radius: 3px;
+    font-family: inherit; font-size: 0.95rem; font-weight: 500;
+    cursor: pointer; transition: background 0.2s; margin-top: 0.5rem;
+  }
+  .form-submit:hover { background: #9c6234; }
+
+  /* Error message (hidden by default, toggle class "show" to display) */
+  .login-error {
+    display: none; background: #fef2f2; border: 1px solid #ecc8c8; border-radius: 4px;
+    padding: 0.65rem 0.85rem; margin-bottom: 1.15rem;
+    color: #8b3a3a; font-size: 0.85rem;
+  }
+  .login-error.show { display: block; }
+
+  /* Footer */
+  footer { text-align: center; padding: 1.5rem; font-size: 0.8rem; color: #b0a38c; }
+  footer a { color: #8b6f47; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 720px) {
+    html { font-size: 15px; }
+    .login-card { padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="home-link">&larr; Home</a>
+    <span style="font-size:0.85rem;color:#9a8b72;">My Site</span>
+  </div>
+</nav>
+
+<div class="login-wrapper">
+  <div class="login-card">
+    <h1 class="login-title">管理员登录</h1>
+    <p class="login-subtitle">请输入账号和密码</p>
+
+    <!-- Error state: add class "show" to display -->
+    <div class="login-error show">账号或密码错误，请重试。</div>
+
+    <div class="form-group">
+      <label class="form-label" for="username">账号</label>
+      <input class="form-input" id="username" type="text" placeholder="请输入管理员账号" />
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="password">密码</label>
+      <input class="form-input" id="password" type="password" placeholder="请输入密码" />
+    </div>
+    <button class="form-submit" type="button">登 录</button>
+  </div>
+</div>
+
+<footer>
+  <p>&copy; 2026 黄启贺 &nbsp;&middot;&nbsp; <a href="index.html">Home</a></p>
+</footer>
+
+</body>
+</html>

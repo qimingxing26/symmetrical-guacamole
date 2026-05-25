@@ -1,0 +1,19 @@
+{
+  "name": "my-site-api",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node dev.js"
+  },
+  "dependencies": {
+    "@cloudbase/node-sdk": "3.18.1",
+    "express": "5.2.1",
+    "my-site-starter": "file:../../..",
+    "serverless-http": "4.0.0"
+  },
+  "devDependencies": {
+    "dotenv": "17.4.2"
+  }
+}

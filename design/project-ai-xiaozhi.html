@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ai小智 — My Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 17px; }
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: #faf8f5; color: #2c2416; line-height: 1.7;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,248,245,0.88); backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e8e0d5; padding: 0.75rem 1.5rem;
+  }
+  .nav-inner {
+    max-width: 860px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .back-link { text-decoration: none; color: #6b5e4a; font-size: 0.92rem; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
+  .back-link:hover { color: #b8753e; }
+  .back-arrow { font-size: 1.1rem; }
+
+  /* ── Article ── */
+  .article { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 2rem; }
+  .article-header { margin-bottom: 2.5rem; }
+  .article-title { font-size: 1.75rem; font-weight: 600; line-height: 1.4; color: #2c2416; margin-bottom: 0.75rem; }
+  .article-meta { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.9rem; color: #9a8b72; }
+  .article-tags { display: flex; gap: 0.4rem; }
+  .article-tag { font-size: 0.75rem; background: #f5efe4; color: #8b6f47; padding: 0.15rem 0.55rem; border-radius: 2px; }
+  .article-divider { width: 3rem; height: 1px; background: #d4c4ac; margin-bottom: 2rem; }
+  .article-body p { margin-bottom: 1.2rem; font-size: 1.02rem; color: #3d3226; }
+  .article-body p:last-child { margin-bottom: 0; }
+  .article-body pre {
+    background: #f5efe4; border: 1px solid #e8e0d5; border-radius: 4px;
+    padding: 1rem 1.15rem; margin-bottom: 1.2rem; overflow-x: auto;
+    font-family: 'Courier New', monospace; font-size: 0.85rem;
+    line-height: 1.5; color: #3d3226;
+  }
+  .article-cover {
+    width: 100%; aspect-ratio: 16 / 9; border-radius: 4px;
+    object-fit: cover; margin-bottom: 2rem;
+  }
+
+  /* ── Comments Section ── */
+  .comments-section { max-width: 760px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+  .comments-header { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem; color: #2c2416; padding-bottom: 0.5rem; border-bottom: 1px solid #e8e0d5; }
+  .comments-count { font-weight: 400; color: #9a8b72; font-size: 0.9rem; }
+
+  .comment-list { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2.5rem; }
+  .comment {
+    background: #ffffff; border: 1px solid #ebe5d9; border-radius: 4px; padding: 1rem 1.15rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .comment.is-new {
+    border-color: #c4a97a;
+    box-shadow: 0 0 0 2px rgba(184,117,62,0.12);
+    animation: commentHighlight 2s ease-out;
+  }
+  @keyframes commentHighlight {
+    0% { background: #fdf6ed; }
+    100% { background: #ffffff; }
+  }
+  .comment-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem; }
+  .comment-nickname { font-weight: 600; font-size: 0.92rem; color: #3d3226; }
+  .comment-time { font-size: 0.78rem; color: #b0a38c; }
+  .comment-content { font-size: 0.92rem; color: #4a3f2f; line-height: 1.6; }
+  .comment-new-badge {
+    display: inline-block; font-size: 0.7rem; background: #b8753e; color: #fff;
+    padding: 0.05rem 0.4rem; border-radius: 2px; margin-left: 0.5rem; font-weight: 500;
+    vertical-align: middle;
+  }
+
+  .comment-success {
+    display: none; background: #f5efe4; border: 1px solid #d4c4ac; border-radius: 4px;
+    padding: 0.75rem 1rem; margin-bottom: 1.25rem; color: #5a4a32; font-size: 0.9rem;
+  }
+  .comment-success.show { display: block; }
+
+  .comment-form {
+    background: #ffffff; border: 1px solid #ebe5d9; border-radius: 4px;
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .comment-form-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; color: #3d3226; }
+  .form-group { margin-bottom: 1rem; }
+  .form-label { display: block; font-size: 0.82rem; color: #6b5e4a; margin-bottom: 0.3rem; }
+  .form-input, .form-textarea {
+    width: 100%; padding: 0.55rem 0.7rem;
+    border: 1px solid #d4cac0; border-radius: 3px;
+    font-family: inherit; font-size: 0.9rem; color: #2c2416;
+    background: #fdfcfa; transition: border-color 0.2s;
+    resize: vertical;
+  }
+  .form-input:focus, .form-textarea:focus {
+    outline: none; border-color: #b8753e; box-shadow: 0 0 0 2px rgba(184,117,62,0.1);
+  }
+  .form-textarea { min-height: 5rem; }
+  .form-hint { font-size: 0.75rem; color: #b0a38c; margin-top: 0.2rem; }
+  .form-submit {
+    background: #b8753e; color: #fff; border: none;
+    padding: 0.55rem 1.75rem; border-radius: 3px;
+    font-family: inherit; font-size: 0.92rem; font-weight: 500;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .form-submit:hover { background: #9c6234; }
+
+  .comment-empty { text-align: center; padding: 2rem 1rem; color: #b0a38c; font-size: 0.92rem; font-style: italic; }
+
+  /* ── Footer ── */
+  footer { text-align: center; padding: 2rem 1.5rem; border-top: 1px solid #e8e0d5; font-size: 0.82rem; color: #b0a38c; }
+  footer a { color: #8b6f47; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 720px) {
+    html { font-size: 15px; }
+    .article-title { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="back-link"><span class="back-arrow">&larr;</span> Back</a>
+    <span style="font-size:0.85rem;color:#9a8b72;">My Site</span>
+  </div>
+</nav>
+
+<article class="article">
+  <div class="article-header">
+    <h1 class="article-title">ai小智</h1>
+    <div class="article-meta">
+      <span>2026</span>
+      <span class="article-tags">
+        <span class="article-tag">IoT</span>
+        <span class="article-tag">ESP32</span>
+        <span class="article-tag">AI</span>
+        <span class="article-tag">嵌入式</span>
+      </span>
+    </div>
+  </div>
+  <div class="article-divider"></div>
+  <img class="article-cover" src="../public/covers/ai小智.jpg" alt="ai小智" />
+  <div class="article-body">
+    <p>ai小智是一个基于 ESP32 的 AI 语音交互桌面机器人，具有语音指令控制动作和灯光效果。</p>
+    <p><strong>软件架构</strong></p>
+    <pre>┌─────────────────────────────────────┐
+│          xiaozhi.bin (主程序)        │
+│  ┌─────────┐  ┌──────────────────┐  │
+│  │ 语音识别  │  │   动作/灯光控制   │  │
+│  │ (srmodels)│  │ (PWM/舵机/LED)  │  │
+│  └─────────┘  └──────────────────┘  │
+│  ┌─────────┐  ┌──────────────────┐  │
+│  │ 网络通信  │  │   OLED 屏幕驱动  │  │
+│  │ (WiFi)   │  │  (I2C SSD1306)  │  │
+│  └─────────┘  └──────────────────┘  │
+│  ┌────────────────────────────────┐  │
+│  │        OTA 在线升级             │  │
+│  └────────────────────────────────┘  │
+├─────────────────────────────────────┤
+│         ESP-IDF / FreeRTOS          │
+└─────────────────────────────────────┘</pre>
+    <p>离线语音识别由 srmodels.bin 提供，不依赖云端 ASR，保障隐私和低延迟。</p>
+    <p>OLED 屏幕通过 I2C 驱动，可显示表情和状态信息。</p>
+    <p>支持 WiFi 连接，可对接 xiaozhi.me 后台实现 OTA 升级和远程配置。</p>
+    <p>舵机/电机驱动实现机器人肢体动作，配合灯光效果呈现丰富的交互反馈。</p>
+  </div>
+</article>
+
+<section class="comments-section" id="comments">
+  <h2 class="comments-header">Comments <span class="comments-count">(0 条评论)</span></h2>
+
+  <div class="comment-success">评论提交成功！已展示在下方。</div>
+
+  <div class="comment-list">
+    <p class="comment-empty">还没有评论，来说点什么吧。</p>
+  </div>
+
+  <div class="comment-form">
+    <p class="comment-form-title">发表评论</p>
+    <div class="form-group">
+      <label class="form-label" for="nickname">昵称</label>
+      <input class="form-input" id="nickname" type="text" placeholder="你的昵称" maxlength="20" />
+      <p class="form-hint">最多 20 个字符</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="content">评论内容</label>
+      <textarea class="form-textarea" id="content" placeholder="写下你的想法……" maxlength="500"></textarea>
+      <p class="form-hint">最多 500 个字符</p>
+    </div>
+    <button class="form-submit" type="button" id="submitBtn">提交评论</button>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 黄启贺 &nbsp;&middot;&nbsp; <a href="index.html">Home</a></p>
+</footer>
+
+<script>
+  document.getElementById('submitBtn').addEventListener('click', function() {
+    var nicknameEl = document.getElementById('nickname');
+    var contentEl = document.getElementById('content');
+    var nickname = nicknameEl.value.trim();
+    var content = contentEl.value.trim();
+    if (!nickname || !content) return;
+
+    var emptyEl = document.querySelector('.comment-empty');
+    if (emptyEl) emptyEl.remove();
+
+    var now = new Date();
+    var timeStr = now.getFullYear() + '-' +
+      String(now.getMonth() + 1).padStart(2, '0') + '-' +
+      String(now.getDate()).padStart(2, '0') + ' ' +
+      String(now.getHours()).padStart(2, '0') + ':' +
+      String(now.getMinutes()).padStart(2, '0');
+
+    var commentEl = document.createElement('div');
+    commentEl.className = 'comment is-new';
+    commentEl.innerHTML =
+      '<div class="comment-head">' +
+        '<span class="comment-nickname">' + escapeHtml(nickname) + ' <span class="comment-new-badge">New</span></span>' +
+        '<span class="comment-time">' + timeStr + '</span>' +
+      '</div>' +
+      '<p class="comment-content">' + escapeHtml(content) + '</p>';
+
+    var list = document.querySelector('.comment-list');
+    list.insertBefore(commentEl, list.firstChild);
+
+    document.querySelector('.comment-success').classList.add('show');
+
+    nicknameEl.value = '';
+    contentEl.value = '';
+
+    var count = document.querySelectorAll('.comment-list .comment').length;
+    document.querySelector('.comments-count').textContent = '(' + count + ' \u6761\u8bc4\u8bba)';
+  });
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+</script>
+
+</body>
+</html>

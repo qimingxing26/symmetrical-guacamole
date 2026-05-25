@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>作品详情 — My Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 17px; }
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: #faf8f5; color: #2c2416; line-height: 1.7;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,248,245,0.88); backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e8e0d5; padding: 0.75rem 1.5rem;
+  }
+  .nav-inner {
+    max-width: 860px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .back-link { text-decoration: none; color: #6b5e4a; font-size: 0.92rem; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
+  .back-link:hover { color: #b8753e; }
+  .back-arrow { font-size: 1.1rem; }
+
+  /* ── Article ── */
+  .article { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 2rem; }
+  .article-header { margin-bottom: 2.5rem; }
+  .article-title { font-size: 1.75rem; font-weight: 600; line-height: 1.4; color: #2c2416; margin-bottom: 0.75rem; }
+  .article-meta { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.9rem; color: #9a8b72; }
+  .article-tags { display: flex; gap: 0.4rem; }
+  .article-tag { font-size: 0.75rem; background: #f5efe4; color: #8b6f47; padding: 0.15rem 0.55rem; border-radius: 2px; }
+  .article-divider { width: 3rem; height: 1px; background: #d4c4ac; margin-bottom: 2rem; }
+  .article-body p { margin-bottom: 1.2rem; font-size: 1.02rem; color: #3d3226; }
+  .article-body p:last-child { margin-bottom: 0; }
+  .article-cover {
+    width: 100%; aspect-ratio: 16 / 9; border-radius: 4px;
+    object-fit: cover; margin-bottom: 2rem;
+  }
+
+  /* ── Comments Section ── */
+  .comments-section { max-width: 760px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+  .comments-header { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem; color: #2c2416; padding-bottom: 0.5rem; border-bottom: 1px solid #e8e0d5; }
+  .comments-count { font-weight: 400; color: #9a8b72; font-size: 0.9rem; }
+
+  /* Comment list */
+  .comment-list { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2.5rem; }
+  .comment {
+    background: #ffffff; border: 1px solid #ebe5d9; border-radius: 4px; padding: 1rem 1.15rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .comment.is-new {
+    border-color: #c4a97a;
+    box-shadow: 0 0 0 2px rgba(184,117,62,0.12);
+    animation: commentHighlight 2s ease-out;
+  }
+  @keyframes commentHighlight {
+    0% { background: #fdf6ed; }
+    100% { background: #ffffff; }
+  }
+  .comment-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem; }
+  .comment-nickname { font-weight: 600; font-size: 0.92rem; color: #3d3226; }
+  .comment-time { font-size: 0.78rem; color: #b0a38c; }
+  .comment-content { font-size: 0.92rem; color: #4a3f2f; line-height: 1.6; }
+  .comment-new-badge {
+    display: inline-block; font-size: 0.7rem; background: #b8753e; color: #fff;
+    padding: 0.05rem 0.4rem; border-radius: 2px; margin-left: 0.5rem; font-weight: 500;
+    vertical-align: middle;
+  }
+
+  /* Success message */
+  .comment-success {
+    display: none; background: #f5efe4; border: 1px solid #d4c4ac; border-radius: 4px;
+    padding: 0.75rem 1rem; margin-bottom: 1.25rem; color: #5a4a32; font-size: 0.9rem;
+  }
+  .comment-success.show { display: block; }
+
+  /* Comment form */
+  .comment-form {
+    background: #ffffff; border: 1px solid #ebe5d9; border-radius: 4px;
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .comment-form-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; color: #3d3226; }
+  .form-group { margin-bottom: 1rem; }
+  .form-label { display: block; font-size: 0.82rem; color: #6b5e4a; margin-bottom: 0.3rem; }
+  .form-input, .form-textarea {
+    width: 100%; padding: 0.55rem 0.7rem;
+    border: 1px solid #d4cac0; border-radius: 3px;
+    font-family: inherit; font-size: 0.9rem; color: #2c2416;
+    background: #fdfcfa; transition: border-color 0.2s;
+    resize: vertical;
+  }
+  .form-input:focus, .form-textarea:focus {
+    outline: none; border-color: #b8753e; box-shadow: 0 0 0 2px rgba(184,117,62,0.1);
+  }
+  .form-textarea { min-height: 5rem; }
+  .form-hint { font-size: 0.75rem; color: #b0a38c; margin-top: 0.2rem; }
+  .form-submit {
+    background: #b8753e; color: #fff; border: none;
+    padding: 0.55rem 1.75rem; border-radius: 3px;
+    font-family: inherit; font-size: 0.92rem; font-weight: 500;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .form-submit:hover { background: #9c6234; }
+
+  /* Empty state */
+  .comment-empty { text-align: center; padding: 2rem 1rem; color: #b0a38c; font-size: 0.92rem; font-style: italic; }
+
+  /* ── Footer ── */
+  footer { text-align: center; padding: 2rem 1.5rem; border-top: 1px solid #e8e0d5; font-size: 0.82rem; color: #b0a38c; }
+  footer a { color: #8b6f47; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── Photo Grid ── */
+  .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 0.75rem; margin-top: 1.5rem; }
+  .photo-item {
+    width: 100%; aspect-ratio: 4/3; border-radius: 4px;
+    object-fit: cover; display: block;
+  }
+  .photo-label { font-size: 0.78rem; color: #6b5e4a; text-align: center; margin-top: 0.35rem; }
+  .photo-section-title { font-size: 0.95rem; font-weight: 600; color: #3d3226; margin: 1.75rem 0 0.75rem; padding-bottom: 0.35rem; border-bottom: 1px solid #e8e0d5; }
+
+  /* ── Video ── */
+  .video-wrapper { margin-top: 1.5rem; }
+  .video-player { width: 100%; max-width: 640px; border-radius: 4px; display: block; }
+  .video-label { font-size: 0.82rem; color: #6b5e4a; text-align: center; margin-top: 0.35rem; }
+
+  @media (max-width: 720px) {
+    html { font-size: 15px; }
+    .article-title { font-size: 1.4rem; }
+    .photo-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="back-link"><span class="back-arrow">&larr;</span> Back</a>
+    <span style="font-size:0.85rem;color:#9a8b72;">My Site</span>
+  </div>
+</nav>
+
+<article class="article">
+  <div class="article-header">
+    <h1 class="article-title">光遇</h1>
+    <div class="article-meta">
+      <span>2026</span>
+      <span class="article-tags">
+        <span class="article-tag">游戏摄影</span>
+        <span class="article-tag">光遇</span>
+        <span class="article-tag">友谊</span>
+      </span>
+    </div>
+  </div>
+  <div class="article-divider"></div>
+  <img class="article-cover" src="../public/covers/光遇.jpg" alt="光遇" />
+  <div class="article-body">
+    <p>在《光·遇》的世界里，与朋友一起探索、冒险、成长。从伊甸尽头的救赎试炼，到海底森林的快乐时光，再到欧若拉演唱会——每一帧都是珍贵的回忆。</p>
+
+    <p class="photo-section-title">伊甸尽头的救赎</p>
+    <p>我和朋友一起去伊甸参加救赎光之子先祖的试炼，完成之后的合影。</p>
+    <div class="photo-grid">
+      <img class="photo-item" src="../public/photos/光遇/伊甸尽头的救赎/图一.jpg" alt="合影 1" />
+      <img class="photo-item" src="../public/photos/光遇/伊甸尽头的救赎/图二.jpg" alt="合影 2" />
+      <img class="photo-item" src="../public/photos/光遇/伊甸尽头的救赎/图三.jpg" alt="合影 3" />
+    </div>
+
+    <p class="photo-section-title">朋友的快乐时光</p>
+    <p>在海底森林一起荡秋千，给她抓皮皮虾，中秋节一起看月亮，观看光遇周年庆的小电影。</p>
+    <div class="photo-grid">
+      <img class="photo-item" src="../public/photos/光遇/朋友的快乐时光/图一.jpg" alt="海底秋千" />
+      <img class="photo-item" src="../public/photos/光遇/朋友的快乐时光/图二.jpg" alt="抓皮皮虾" />
+      <img class="photo-item" src="../public/photos/光遇/朋友的快乐时光/图三.jpg" alt="中秋赏月" />
+      <img class="photo-item" src="../public/photos/光遇/朋友的快乐时光/图四.jpg" alt="周年庆" />
+    </div>
+
+    <p class="photo-section-title">欧若拉的音乐会</p>
+    <p>我和朋友一起参加光遇欧若拉演唱会的纪念门票，还有所有光之子的合影。</p>
+    <div class="photo-grid">
+      <img class="photo-item" src="../public/photos/光遇/欧若拉的音乐会/图一.png" alt="纪念门票 1" />
+      <img class="photo-item" src="../public/photos/光遇/欧若拉的音乐会/图二.png" alt="纪念门票 2" />
+      <img class="photo-item" src="../public/photos/光遇/欧若拉的音乐会/图三.png" alt="光之子合影" />
+    </div>
+
+    <p class="photo-section-title">光遇音乐</p>
+    <p>我在光遇里学会了弹琴，这是我弹奏的歌曲。</p>
+    <div class="video-wrapper">
+      <video src="../public/photos/光遇/光遇音乐/玫瑰少年.mp4" controls preload="metadata" class="video-player">
+        您的浏览器不支持视频播放。
+      </video>
+      <p class="video-label">玫瑰少年</p>
+    </div>
+  </div>
+</article>
+
+<section class="comments-section" id="comments">
+  <h2 class="comments-header">Comments <span class="comments-count">(3 条评论)</span></h2>
+
+  <!-- Success message (hidden by default, toggle class "show" to display) -->
+  <div class="comment-success show">评论提交成功！已展示在下方。</div>
+
+  <div class="comment-list">
+    <!-- Newly submitted comment -->
+    <div class="comment is-new">
+      <div class="comment-head">
+        <span class="comment-nickname">小陈 <span class="comment-new-badge">New</span></span>
+        <span class="comment-time">刚刚</span>
+      </div>
+      <p class="comment-content">光遇的每一帧都好美！欧若拉演唱会那几张太有纪念意义了。</p>
+    </div>
+
+    <!-- Existing comments -->
+    <div class="comment">
+      <div class="comment-head">
+        <span class="comment-nickname">阿明</span>
+        <span class="comment-time">2026-05-15 14:32</span>
+      </div>
+      <p class="comment-content">海底森林荡秋千那张好有爱！光遇真的是一个充满温暖的世界。</p>
+    </div>
+    <div class="comment">
+      <div class="comment-head">
+        <span class="comment-nickname">老师</span>
+        <span class="comment-time">2026-05-14 09:15</span>
+      </div>
+      <p class="comment-content">伊甸试炼后的合影好感动，和朋友一起完成挑战的感觉一定很棒。</p>
+    </div>
+  </div>
+
+  <!-- Comment form -->
+  <div class="comment-form">
+    <p class="comment-form-title">发表评论</p>
+    <div class="form-group">
+      <label class="form-label" for="nickname">昵称</label>
+      <input class="form-input" id="nickname" type="text" placeholder="你的昵称" maxlength="20" />
+      <p class="form-hint">最多 20 个字符</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="content">评论内容</label>
+      <textarea class="form-textarea" id="content" placeholder="写下你的想法……" maxlength="500"></textarea>
+      <p class="form-hint">最多 500 个字符</p>
+    </div>
+    <button class="form-submit" type="button" id="submitBtn">提交评论</button>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 黄启贺 &nbsp;&middot;&nbsp; <a href="index.html">Home</a></p>
+</footer>
+
+<script>
+  document.getElementById('submitBtn').addEventListener('click', function() {
+    var nicknameEl = document.getElementById('nickname');
+    var contentEl = document.getElementById('content');
+    var nickname = nicknameEl.value.trim();
+    var content = contentEl.value.trim();
+    if (!nickname || !content) return;
+
+    var emptyEl = document.querySelector('.comment-empty');
+    if (emptyEl) emptyEl.remove();
+
+    var now = new Date();
+    var timeStr = now.getFullYear() + '-' +
+      String(now.getMonth() + 1).padStart(2, '0') + '-' +
+      String(now.getDate()).padStart(2, '0') + ' ' +
+      String(now.getHours()).padStart(2, '0') + ':' +
+      String(now.getMinutes()).padStart(2, '0');
+
+    var commentEl = document.createElement('div');
+    commentEl.className = 'comment is-new';
+    commentEl.innerHTML =
+      '<div class="comment-head">' +
+        '<span class="comment-nickname">' + escapeHtml(nickname) + ' <span class="comment-new-badge">New</span></span>' +
+        '<span class="comment-time">' + timeStr + '</span>' +
+      '</div>' +
+      '<p class="comment-content">' + escapeHtml(content) + '</p>';
+
+    var list = document.querySelector('.comment-list');
+    list.insertBefore(commentEl, list.firstChild);
+
+    document.querySelector('.comment-success').classList.add('show');
+
+    nicknameEl.value = '';
+    contentEl.value = '';
+
+    var count = document.querySelectorAll('.comment-list .comment').length;
+    document.querySelector('.comments-count').textContent = '(' + count + ' \u6761\u8bc4\u8bba)';
+  });
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+</script>
+
+</body>
+</html>

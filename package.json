@@ -1,0 +1,34 @@
+{
+  "name": "my-site-starter",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "dev:api": "npm --prefix cloudfunctions/functions/api install --no-audit --no-fund && node cloudfunctions/functions/api/dev.js",
+    "dev:full": "npm --prefix cloudfunctions/functions/api install --no-audit --no-fund && concurrently -n api,vite -c blue,green \"node cloudfunctions/functions/api/dev.js\" \"vite --host\"",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "19.2.5",
+    "react-dom": "19.2.5",
+    "react-router-dom": "7.15.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.1",
+    "@types/node": "20.19.25",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "4.7.0",
+    "concurrently": "9.2.1",
+    "eslint": "9.39.1",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "eslint-plugin-react-refresh": "0.5.2",
+    "globals": "16.5.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.48.0",
+    "vite": "6.4.2"
+  }
+}

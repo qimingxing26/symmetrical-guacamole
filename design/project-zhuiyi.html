@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>作品详情 — My Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 17px; }
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: #faf8f5; color: #2c2416; line-height: 1.7;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,248,245,0.88); backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e8e0d5; padding: 0.75rem 1.5rem;
+  }
+  .nav-inner {
+    max-width: 860px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .back-link { text-decoration: none; color: #6b5e4a; font-size: 0.92rem; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
+  .back-link:hover { color: #b8753e; }
+  .back-arrow { font-size: 1.1rem; }
+
+  /* ── Article ── */
+  .article { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 2rem; }
+  .article-header { margin-bottom: 2.5rem; }
+  .article-title { font-size: 1.75rem; font-weight: 600; line-height: 1.4; color: #2c2416; margin-bottom: 0.75rem; }
+  .article-meta { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.9rem; color: #9a8b72; }
+  .article-tags { display: flex; gap: 0.4rem; }
+  .article-tag { font-size: 0.75rem; background: #f5efe4; color: #8b6f47; padding: 0.15rem 0.55rem; border-radius: 2px; }
+  .article-divider { width: 3rem; height: 1px; background: #d4c4ac; margin-bottom: 2rem; }
+  .article-body p { margin-bottom: 1.2rem; font-size: 1.02rem; color: #3d3226; }
+  .article-body p:last-child { margin-bottom: 0; }
+  .article-cover {
+    width: 100%; aspect-ratio: 16 / 9; border-radius: 4px;
+    object-fit: cover; margin-bottom: 2rem;
+  }
+
+  /* ── Comments Section ── */
+  .comments-section { max-width: 760px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+  .comments-header { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem; color: #2c2416; padding-bottom: 0.5rem; border-bottom: 1px solid #e8e0d5; }
+  .comments-count { font-weight: 400; color: #9a8b72; font-size: 0.9rem; }
+
+  /* Comment list */
+  .comment-list { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2.5rem; }
+  .comment {
+    background: #ffffff; border: 1px solid #ebe5d9; border-radius: 4px; padding: 1rem 1.15rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .comment.is-new {
+    border-color: #c4a97a;
+    box-shadow: 0 0 0 2px rgba(184,117,62,0.12);
+    animation: commentHighlight 2s ease-out;
+  }
+  @keyframes commentHighlight {
+    0% { background: #fdf6ed; }
+    100% { background: #ffffff; }
+  }
+  .comment-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem; }
+  .comment-nickname { font-weight: 600; font-size: 0.92rem; color: #3d3226; }
+  .comment-time { font-size: 0.78rem; color: #b0a38c; }
+  .comment-content { font-size: 0.92rem; color: #4a3f2f; line-height: 1.6; }
+  .comment-new-badge {
+    display: inline-block; font-size: 0.7rem; background: #b8753e; color: #fff;
+    padding: 0.05rem 0.4rem; border-radius: 2px; margin-left: 0.5rem; font-weight: 500;
+    vertical-align: middle;
+  }
+
+  /* Success message */
+  .comment-success {
+    display: none; background: #f5efe4; border: 1px solid #d4c4ac; border-radius: 4px;
+    padding: 0.75rem 1rem; margin-bottom: 1.25rem; color: #5a4a32; font-size: 0.9rem;
+  }
+  .comment-success.show { display: block; }
+
+  /* Comment form */
+  .comment-form {
+    background: #ffffff; border: 1px solid #ebe5d9; border-radius: 4px;
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .comment-form-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; color: #3d3226; }
+  .form-group { margin-bottom: 1rem; }
+  .form-label { display: block; font-size: 0.82rem; color: #6b5e4a; margin-bottom: 0.3rem; }
+  .form-input, .form-textarea {
+    width: 100%; padding: 0.55rem 0.7rem;
+    border: 1px solid #d4cac0; border-radius: 3px;
+    font-family: inherit; font-size: 0.9rem; color: #2c2416;
+    background: #fdfcfa; transition: border-color 0.2s;
+    resize: vertical;
+  }
+  .form-input:focus, .form-textarea:focus {
+    outline: none; border-color: #b8753e; box-shadow: 0 0 0 2px rgba(184,117,62,0.1);
+  }
+  .form-textarea { min-height: 5rem; }
+  .form-hint { font-size: 0.75rem; color: #b0a38c; margin-top: 0.2rem; }
+  .form-submit {
+    background: #b8753e; color: #fff; border: none;
+    padding: 0.55rem 1.75rem; border-radius: 3px;
+    font-family: inherit; font-size: 0.92rem; font-weight: 500;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .form-submit:hover { background: #9c6234; }
+
+  /* Empty state */
+  .comment-empty { text-align: center; padding: 2rem 1rem; color: #b0a38c; font-size: 0.92rem; font-style: italic; }
+
+  /* ── Footer ── */
+  footer { text-align: center; padding: 2rem 1.5rem; border-top: 1px solid #e8e0d5; font-size: 0.82rem; color: #b0a38c; }
+  footer a { color: #8b6f47; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 720px) {
+    html { font-size: 15px; }
+    .article-title { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="back-link"><span class="back-arrow">&larr;</span> Back</a>
+    <span style="font-size:0.85rem;color:#9a8b72;">My Site</span>
+  </div>
+</nav>
+
+<article class="article">
+  <div class="article-header">
+    <h1 class="article-title">追忆</h1>
+    <div class="article-meta">
+      <span>2026</span>
+      <span class="article-tags">
+        <span class="article-tag">历史</span>
+        <span class="article-tag">红色</span>
+        <span class="article-tag">爱国</span>
+      </span>
+    </div>
+  </div>
+  <div class="article-divider"></div>
+  <img class="article-cover" src="../public/covers/追忆.webp" alt="追忆" />
+  <div class="article-body">
+    <p>漫步在岁月的长河，我看到了一抹鲜艳的红，像心脏喷涌出的鲜血一样的红，绵延百年，奔腾不息。我徜徉在这如同热血一样的红色长河中，感受着她蓬勃有力的心跳，震撼于她生生不息的活力，又悄悄浸染上她温暖如同家乡般的气息，心中悄然浮现出一个烙印在生命中的名字：中国。不知何时手中多了一块石头，沉甸甸的，未曾细想便握着那块石头被岁月的河流携冲而去。</p>
+    <p>这是一个充满纷乱的年代，却又有着希望的年代，我在这里看到了一个湖，平淡无波下张弛着新生命诞生的韵律，这里是浙江嘉兴，中国开始真正走向复兴的起点。一张张年轻的面孔，一个个充满朝气的年轻人走进湖上的游船，吱呀吱呀，是船桨的声音，也是新生命的哇哇啼鸣。"我志愿加入中国共产党！"一句句有力的宣言使湖面漾起了几道涟漪，也使这片沉寂已久的中国大地开始了复苏。</p>
+    <p>南昌城的一声惊雷，震醒了这只沉睡已久的东方雄狮，一个响亮的名字在人们口中流传开来——人民的军队。炮声轰轰，那是不甘屈服的灵魂在怒吼；血花迸溅，那是充满活力的生命在纵情燃烧。沉重的担子压在这群年轻人的肩头，让他们担着复兴的使命，一路前行。星星之火，可以燎原，革命的道路一路曲折，长征的旅程步步留种，在那热血滚烫的年代，一颗耀眼的红星冉冉升起！他叫党，中国共产党！</p>
+    <p>十四年抗战，风雨兼程，一位又一位的人民英雄在战场上流尽了鲜血，不求马革裹尸，只愿魂佑疆土。可曾记得百团大战的枪林弹雨，那是用鲜血和生命换来的胜利；可曾记得白公馆内的铮铮铁汉，他们用沉默换来了更多人的生命。万家灯火，照亮他们回家的路；朵朵血花，映出他们心中无悔的誓言。漫长时间的等待，只为了那一句站在天安门城楼的宣告：中华人民共和国中央人民政府今天成立了！</p>
+    <p>滴答，滴答，眼角泛起点点泪花，手中的石头不知何时滚烫如火，低头一看，哪里是什么石头，一颗如热血般的红星正散发着耀眼的光芒，如同一颗心脏一样，充满激情与生命。</p>
+    <p>雄赳赳，气昂昂，跨过鸭绿江。中国百废待兴之际，一场要打而且要打得漂亮的战争悄然拉开帷幕，抗美援朝，保家卫国！在那异国他乡的朝鲜，在那冰天雪地的冻土之上，有着一支支中国军队，血战上甘岭，3.8平方公里的土地被炮火削平，换来的是中国人民志愿军用生命铸造的不朽城墙，攻，要攻得下；守，要守得住。他们有的人一个人死守，捍卫着每一寸阵地，实现人在阵地在的誓言；他们有的人是一把锋利无比的尖刀，以自身的痛换来直插敌人心脏的一个机会。在饥寒交迫的时候，他们会遥望祖国的方向，心中有家，心中有人民。他们希望下一代，能够生长在一个没有硝烟的年代；他们希望山河无恙，人间皆安；他们希望热血之中，祖国复兴！哪怕他们死后无人可奠，哪怕他们悄然而逝，岁月抹去一切，只求祖国万安。但，岂曰无碑，山河为碑；何用留名，人心即名。</p>
+    <p>轻轻擦去眼角的泪水，握着那枚五角红星顺着岁月的河流一路前行，迎面而来的是一缕温暖的春风，那是改革的春潮。"一九七九年，那是一个春天，有一位老人在中国的南海边画了一个圈……"伴随着改革开放的赞歌，中国一下子将自己积累了多年的精力发泄了出来。听，那是小岗村村民在立下包干到户的誓言；看，那是深圳奇迹般崛起的一座座高楼大厦。庄严肃穆的，是党的十一届三中全会；乐颜欢笑的，是辛苦一年的劳动人民。天地间荡起滚滚春潮，征途上扬起浩浩风帆，中国展开了一幅百年的新画卷，捧出了万紫千红的春天。</p>
+    <p>民亦劳止，汔可小康。这是千年之前古老人民的美好愿望，如今伴随着第一个百年目标的成功完成而实现。全国人口全部实现脱贫，创造了中国奇迹，世界奇迹，而在这背后的，是一位又一位扶贫人的辛勤成果。你看，那是蒙古的刺绣，一针一线都蕴含着白晶莹的心血，千针万线换来了老百姓的幸福小康；你听，那叮叮当当的凿山声，百丈悬崖，羊肠小道，当代愚公毛相林为百姓凿出了一条小康之路；还有那位张妈妈，是她为大山里的女孩搭造了一条知识之路，是她为大山里的女孩带来了希望！</p>
+    <p>走到这里，我低头看了看手里的五角红星，若有所悟，作为新一代青少年，我们更应该做好自己，或许，目前我们无法像先烈那样为祖国献身，无法像时代楷模一样为祖国做更大贡献，但我们一定会尽自己的一份力，为祖国繁荣昌盛点缀光芒。习近平主席说过"青年一代有理想，有担当"，未来属于我们，我们也应当不负未来！</p>
+    <p>握紧那枚红星，贴于我的心前，嘴角扬起一抹微笑，走向那属于我们的未来！</p>
+  </div>
+</article>
+
+<section class="comments-section" id="comments">
+  <h2 class="comments-header">Comments <span class="comments-count">(3 条评论)</span></h2>
+
+  <!-- Success message (hidden by default, toggle class "show" to display) -->
+  <div class="comment-success show">评论提交成功！已展示在下方。</div>
+
+  <div class="comment-list">
+    <!-- Newly submitted comment -->
+    <div class="comment is-new">
+      <div class="comment-head">
+        <span class="comment-nickname">小陈 <span class="comment-new-badge">New</span></span>
+        <span class="comment-time">刚刚</span>
+      </div>
+      <p class="comment-content">以红星为线索串起百年征程，写法很有创意，读来心潮澎湃！</p>
+    </div>
+
+    <!-- Existing comments -->
+    <div class="comment">
+      <div class="comment-head">
+        <span class="comment-nickname">阿明</span>
+        <span class="comment-time">2026-05-15 14:32</span>
+      </div>
+      <p class="comment-content">抗美援朝那段写得最有力量，"岂曰无碑，山河为碑"——这句话我记下了。</p>
+    </div>
+    <div class="comment">
+      <div class="comment-head">
+        <span class="comment-nickname">老师</span>
+        <span class="comment-time">2026-05-14 09:15</span>
+      </div>
+      <p class="comment-content">从南湖到天安门再到脱贫攻坚，一气呵成，作为青年读者深受鼓舞。</p>
+    </div>
+  </div>
+
+  <!-- Comment form -->
+  <div class="comment-form">
+    <p class="comment-form-title">发表评论</p>
+    <div class="form-group">
+      <label class="form-label" for="nickname">昵称</label>
+      <input class="form-input" id="nickname" type="text" placeholder="你的昵称" maxlength="20" />
+      <p class="form-hint">最多 20 个字符</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="content">评论内容</label>
+      <textarea class="form-textarea" id="content" placeholder="写下你的想法……" maxlength="500"></textarea>
+      <p class="form-hint">最多 500 个字符</p>
+    </div>
+    <button class="form-submit" type="button" id="submitBtn">提交评论</button>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 黄启贺 &nbsp;&middot;&nbsp; <a href="index.html">Home</a></p>
+</footer>
+
+<script>
+  document.getElementById('submitBtn').addEventListener('click', function() {
+    var nicknameEl = document.getElementById('nickname');
+    var contentEl = document.getElementById('content');
+    var nickname = nicknameEl.value.trim();
+    var content = contentEl.value.trim();
+    if (!nickname || !content) return;
+
+    var emptyEl = document.querySelector('.comment-empty');
+    if (emptyEl) emptyEl.remove();
+
+    var now = new Date();
+    var timeStr = now.getFullYear() + '-' +
+      String(now.getMonth() + 1).padStart(2, '0') + '-' +
+      String(now.getDate()).padStart(2, '0') + ' ' +
+      String(now.getHours()).padStart(2, '0') + ':' +
+      String(now.getMinutes()).padStart(2, '0');
+
+    var commentEl = document.createElement('div');
+    commentEl.className = 'comment is-new';
+    commentEl.innerHTML =
+      '<div class="comment-head">' +
+        '<span class="comment-nickname">' + escapeHtml(nickname) + ' <span class="comment-new-badge">New</span></span>' +
+        '<span class="comment-time">' + timeStr + '</span>' +
+      '</div>' +
+      '<p class="comment-content">' + escapeHtml(content) + '</p>';
+
+    var list = document.querySelector('.comment-list');
+    list.insertBefore(commentEl, list.firstChild);
+
+    document.querySelector('.comment-success').classList.add('show');
+
+    nicknameEl.value = '';
+    contentEl.value = '';
+
+    var count = document.querySelectorAll('.comment-list .comment').length;
+    document.querySelector('.comments-count').textContent = '(' + count + ' \u6761\u8bc4\u8bba)';
+  });
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+</script>
+
+</body>
+</html>

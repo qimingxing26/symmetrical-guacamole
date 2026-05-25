@@ -1,0 +1,17 @@
+{
+  "envId": "{{ENV_ID}}",
+  "functions": [
+    {
+      "name": "api",
+      "timeout": 10,
+      "runtime": "Nodejs18.15",
+      "handler": "index.main",
+      "envVariables": {
+        "ENV_ID": "{{ENV_ID}}",
+        "ADMIN_USERNAME": "{{ADMIN_USERNAME}}",
+        "ADMIN_PASSWORD": "{{ADMIN_PASSWORD}}",
+        "ADMIN_TOKEN_SECRET": "{{ADMIN_TOKEN_SECRET}}"
+      }
+    }
+  ]
+}

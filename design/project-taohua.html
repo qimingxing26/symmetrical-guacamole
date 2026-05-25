@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>作品详情 — My Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 17px; }
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: #faf8f5; color: #2c2416; line-height: 1.7;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,248,245,0.88); backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e8e0d5; padding: 0.75rem 1.5rem;
+  }
+  .nav-inner {
+    max-width: 860px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .back-link { text-decoration: none; color: #6b5e4a; font-size: 0.92rem; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
+  .back-link:hover { color: #b8753e; }
+  .back-arrow { font-size: 1.1rem; }
+
+  /* ── Article ── */
+  .article { max-width: 760px; margin: 0 auto; padding: 3rem 1.5rem 2rem; }
+  .article-header { margin-bottom: 2.5rem; }
+  .article-title { font-size: 1.75rem; font-weight: 600; line-height: 1.4; color: #2c2416; margin-bottom: 0.75rem; }
+  .article-meta { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; font-size: 0.9rem; color: #9a8b72; }
+  .article-tags { display: flex; gap: 0.4rem; }
+  .article-tag { font-size: 0.75rem; background: #f5efe4; color: #8b6f47; padding: 0.15rem 0.55rem; border-radius: 2px; }
+  .article-divider { width: 3rem; height: 1px; background: #d4c4ac; margin-bottom: 2rem; }
+  .article-body p { margin-bottom: 1.2rem; font-size: 1.02rem; color: #3d3226; }
+  .article-body p:last-child { margin-bottom: 0; }
+  .article-cover {
+    width: 100%; aspect-ratio: 16 / 9; border-radius: 4px;
+    object-fit: cover; margin-bottom: 2rem;
+  }
+
+  /* ── Comments Section ── */
+  .comments-section { max-width: 760px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+  .comments-header { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem; color: #2c2416; padding-bottom: 0.5rem; border-bottom: 1px solid #e8e0d5; }
+  .comments-count { font-weight: 400; color: #9a8b72; font-size: 0.9rem; }
+
+  /* Comment list */
+  .comment-list { display: flex; flex-direction: column; gap: 1.25rem; margin-bottom: 2.5rem; }
+  .comment {
+    background: #ffffff; border: 1px solid #ebe5d9; border-radius: 4px; padding: 1rem 1.15rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .comment.is-new {
+    border-color: #c4a97a;
+    box-shadow: 0 0 0 2px rgba(184,117,62,0.12);
+    animation: commentHighlight 2s ease-out;
+  }
+  @keyframes commentHighlight {
+    0% { background: #fdf6ed; }
+    100% { background: #ffffff; }
+  }
+  .comment-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.4rem; }
+  .comment-nickname { font-weight: 600; font-size: 0.92rem; color: #3d3226; }
+  .comment-time { font-size: 0.78rem; color: #b0a38c; }
+  .comment-content { font-size: 0.92rem; color: #4a3f2f; line-height: 1.6; }
+  .comment-new-badge {
+    display: inline-block; font-size: 0.7rem; background: #b8753e; color: #fff;
+    padding: 0.05rem 0.4rem; border-radius: 2px; margin-left: 0.5rem; font-weight: 500;
+    vertical-align: middle;
+  }
+
+  /* Success message */
+  .comment-success {
+    display: none; background: #f5efe4; border: 1px solid #d4c4ac; border-radius: 4px;
+    padding: 0.75rem 1rem; margin-bottom: 1.25rem; color: #5a4a32; font-size: 0.9rem;
+  }
+  .comment-success.show { display: block; }
+
+  /* Comment form */
+  .comment-form {
+    background: #ffffff; border: 1px solid #ebe5d9; border-radius: 4px;
+    padding: 1.25rem 1.25rem 1.5rem;
+  }
+  .comment-form-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 1rem; color: #3d3226; }
+  .form-group { margin-bottom: 1rem; }
+  .form-label { display: block; font-size: 0.82rem; color: #6b5e4a; margin-bottom: 0.3rem; }
+  .form-input, .form-textarea {
+    width: 100%; padding: 0.55rem 0.7rem;
+    border: 1px solid #d4cac0; border-radius: 3px;
+    font-family: inherit; font-size: 0.9rem; color: #2c2416;
+    background: #fdfcfa; transition: border-color 0.2s;
+    resize: vertical;
+  }
+  .form-input:focus, .form-textarea:focus {
+    outline: none; border-color: #b8753e; box-shadow: 0 0 0 2px rgba(184,117,62,0.1);
+  }
+  .form-textarea { min-height: 5rem; }
+  .form-hint { font-size: 0.75rem; color: #b0a38c; margin-top: 0.2rem; }
+  .form-submit {
+    background: #b8753e; color: #fff; border: none;
+    padding: 0.55rem 1.75rem; border-radius: 3px;
+    font-family: inherit; font-size: 0.92rem; font-weight: 500;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .form-submit:hover { background: #9c6234; }
+
+  /* Empty state */
+  .comment-empty { text-align: center; padding: 2rem 1rem; color: #b0a38c; font-size: 0.92rem; font-style: italic; }
+
+  /* ── Footer ── */
+  footer { text-align: center; padding: 2rem 1.5rem; border-top: 1px solid #e8e0d5; font-size: 0.82rem; color: #b0a38c; }
+  footer a { color: #8b6f47; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 720px) {
+    html { font-size: 15px; }
+    .article-title { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="back-link"><span class="back-arrow">&larr;</span> Back</a>
+    <span style="font-size:0.85rem;color:#9a8b72;">My Site</span>
+  </div>
+</nav>
+
+<article class="article">
+  <div class="article-header">
+    <h1 class="article-title">桃花灼灼，君知我</h1>
+    <div class="article-meta">
+      <span>2026</span>
+      <span class="article-tags">
+        <span class="article-tag">友情</span>
+        <span class="article-tag">古琴</span>
+        <span class="article-tag">文学</span>
+      </span>
+    </div>
+  </div>
+  <div class="article-divider"></div>
+  <img class="article-cover" src="../public/covers/桃花灼灼.webp" alt="桃花灼灼，君知我" />
+  <div class="article-body">
+    <p>屋外天空，雪白的云遮死了太阳，不见一丝金光；室内一角，深色的帘捂住了明窗，空间更显灰暗。</p>
+    <p>我坐于窗前，揽过一张古琴，手指一点一点爬上了琴弦，一按一拨，三指两拂，奏出一曲高山流水。琴声缓时清越，急时淙淙，似流水但无鱼，音至高山之节，巍峨山却荒，死气沉沉，而我却沉浸其中，自娱自乐。</p>
+    <p>时间悄悄地溜走，云彩不情愿地挪开身子，让这一方小小的金阳嵌在蓝天白云之间，于是一抹阳光就泼洒在我的窗前，许是帘小，缕缕金光从帘中的缝隙中钻了进来，跌落在琴弦上，伴随着弦的拨动，一阵翻滚。金光流淌于琴面，银白色的弦仿佛一下子变软了，不再冰冷、坚硬，点点金光通过那银色的弦折射入我的眼中，如石入古井，扰动了我的心。我伸出手，将那缕金光握于手中，闭上眼睛，感受光的温暖，久之喃喃自语：这就是光吗？真的好暖、好暖。像是轮回那么漫长，我沉醉于温暖的光海，却未发觉掌中的温暖越来越淡，最终化为冰冷。我下意识睁开双眼，发现金光已然消失不见。乌云又重新遮盖了太阳，我呆呆的，一动不动，一滴水落了下来，同样落在弦上，一声颤音响起，伴随着我的哭泣，弥漫在冰冷的空气中……</p>
+    <p>在这一方狭小的室内，埋葬着我的悲伤，我的孤独，心中的情感只寄托于一张漂流于岁月之河的古琴，抚琴叹息，拥琴而泣，在悲伤的琴音中逃避自我，于繁华的大千世界放逐人生。直到一束光的倏然亮起，久伴在我身旁，驱散我生命中的阴霾。</p>
+    <p>一方桃林，本是无心相遇，却洒落光河一挂，璀璨无比，灌溉我荒芜的心野，萌发希望的种子。</p>
+    <p>我怀抱着古琴，向那一方桃林走去，那是除却我那狭小的室内的另一处心灵寄托之地，如果说小室是我的悲伤之地，那么这一方桃林就是美好，涵盖着这个世界上最珍贵的光明。</p>
+    <p>近了，近了，我抱紧了怀中的古琴，眼中的悲伤与孤独自然而然地消逝了几分。走进桃林深处，花香弥漫，时不时就洒落一场花雨，纷飞遍地。倚坐于一棵桃花树下，置琴，调弦，伴随着点点粉雨，悠扬的琴声慢慢洗涤我灵台上的灰尘。琴音回荡在桃林，我亦沉浸于其中，不知何时，只留余音，而我倚于树下，沉沉睡去……</p>
+    <p>忽然感到额头一阵清凉，我猛地惊醒，睁眼一看，一只白皙的手映入眼眶，我一愣，下意识揽住面前的古琴，起身就要离开，这时一个轻柔的声音叫住了我："等一下——"我回过头，眼中的惊慌已化作冷漠，"有事吗？""你的琴声真好听，可不可以——""不能！"我打断你的话，"等下次吧！"我头也不回地离开了。</p>
+    <p>几天后，当我再次前往桃林时，竟一眼就看到了你，你自然也看到了我，欣喜地朝我跑过来，脚步轻盈，带着花雨与花香，迎风而至。我低下眼帘，点点头算是致意，避过你又来到那棵树下，盘膝而坐，你一愣，什么也没有说，只是缓缓走到我的身前，脚步声略微沉重了一些。琴声再次响起，我如一个孤独的旅人，以花香与琴音作酒，自酣自酌，灌醉自己的悲伤与孤独，将自我短暂释放于世间。</p>
+    <p>"你的琴音好冷清啊！"琴声一顿，随后再度响起。"何以见得？"带着一份惆怅，我的话不再冷漠，反而有所缓和。"有土石，无草木，有山水，无生灵。你是不是有什么伤心事啊？"我沉默了，只是继续弹琴，心里却波涛汹涌，翻腾起尺尺巨浪：她懂我的琴，也懂我。要不同她倾诉一番，或许她就是我真正的朋友呢？还是算了吧，你忘记之前发生的种种了吗？你还想再被人刺得遍体鳞伤吗？</p>
+    <p>我抬起头，第一次注视你，你歪着头，朝我微笑，双手背在身后，一头黑发如瀑布一般垂至腰间，落落大方，如那桃花一般，丝毫不吝啬自己的美，让人不得不产生几分信任。</p>
+    <p>那一天，有桃花飞舞，有人倾诉内心，从朝霞到夕辉，我把所有的悲伤尽情吐露，将无边的孤独快意释放，心中的伤痕第一次被我展现在他人面前。"你知道我经历过多少次友情的背叛吗？那种痛刻骨铭心，将我伤的浑身是血，从那以后，我愿发誓，宁愿永坠黑暗与孤独，也不再信任他人，即便我渴望光明！"</p>
+    <p>那一天，说了许多、许多，我只记得，临分别时你眸子中的那一抹忧伤与心痛，只记得那一句让我安心的话语："我愿做你真正的朋友，带给你光明，承诺你友谊，哪怕病魔无情，也要做一生挚友！"</p>
+    <p>当我再到桃花林时，却不见了你的踪影，只有一封浸透着桃花香气的诀别信在静静地等着我的到来。"真不知道该说些什么呢？这些天，每想起你总忍不住落泪。不过还好，让我遇到了你。既然如此，那就让我发挥一下生命的最后余热吧。本以为这一生，我匆匆来过，什么也不会留下，可我遇到了你，我可以做你的朋友，抚平你的伤痕，带给你光明，没想到，我的生命竟如此的有意义，真的好开心呀！要是如果，如果我不在了，那么请你不要重归黑暗，因为我希望，我带给你的光明能够永存。哎呀，忘了说了，其实我得了一种很奇怪的病，虽然说治愈的希望挺渺茫的，但总还有一线生机嘛！相信我，我能够撑过去，也相信光明，它能带给你希望，总之无论结果如何，你的一生挚友我做定了！一周后，我会再来到桃林，若是无法相见，请你永浴光明，但愿相见。"</p>
+    <p>我急忙看向落款，正是一周前，我冲进桃林深处，但没有你的身影，我呆住了，眼泪大滴大滴地落下，最后泣不成声。桃花依旧纷纷扬扬地落下，花香依旧让人痴迷，只不过再也没有了那一个，一生挚友。</p>
+    <p>"就这么对我没有信心吗？"一个虚弱但又无比熟悉的声音在我身后响起，我猛然回头，只见你俏生生站在那里，面带微笑，像是等待我许久了，背后，灿烂的阳光挥洒而下，一片光明。</p>
+  </div>
+</article>
+
+<section class="comments-section" id="comments">
+  <h2 class="comments-header">Comments <span class="comments-count">(3 条评论)</span></h2>
+
+  <!-- Success message (hidden by default, toggle class "show" to display) -->
+  <div class="comment-success show">评论提交成功！已展示在下方。</div>
+
+  <div class="comment-list">
+    <!-- Newly submitted comment -->
+    <div class="comment is-new">
+      <div class="comment-head">
+        <span class="comment-nickname">小陈 <span class="comment-new-badge">New</span></span>
+        <span class="comment-time">刚刚</span>
+      </div>
+      <p class="comment-content">琴音描写太美了，古琴与桃花，孤独与友谊，读完好想学古琴。</p>
+    </div>
+
+    <!-- Existing comments -->
+    <div class="comment">
+      <div class="comment-head">
+        <span class="comment-nickname">阿明</span>
+        <span class="comment-time">2026-05-15 14:32</span>
+      </div>
+      <p class="comment-content">读到诀别信那段哭了，还好最后是温暖的结局，一生挚友真好。</p>
+    </div>
+    <div class="comment">
+      <div class="comment-head">
+        <span class="comment-nickname">老师</span>
+        <span class="comment-time">2026-05-14 09:15</span>
+      </div>
+      <p class="comment-content">把琴声和情感融合得太好了，孤独被友谊治愈的过程写得很动人。</p>
+    </div>
+  </div>
+
+  <!-- Comment form -->
+  <div class="comment-form">
+    <p class="comment-form-title">发表评论</p>
+    <div class="form-group">
+      <label class="form-label" for="nickname">昵称</label>
+      <input class="form-input" id="nickname" type="text" placeholder="你的昵称" maxlength="20" />
+      <p class="form-hint">最多 20 个字符</p>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="content">评论内容</label>
+      <textarea class="form-textarea" id="content" placeholder="写下你的想法……" maxlength="500"></textarea>
+      <p class="form-hint">最多 500 个字符</p>
+    </div>
+    <button class="form-submit" type="button" id="submitBtn">提交评论</button>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 黄启贺 &nbsp;&middot;&nbsp; <a href="index.html">Home</a></p>
+</footer>
+
+<script>
+  document.getElementById('submitBtn').addEventListener('click', function() {
+    var nicknameEl = document.getElementById('nickname');
+    var contentEl = document.getElementById('content');
+    var nickname = nicknameEl.value.trim();
+    var content = contentEl.value.trim();
+    if (!nickname || !content) return;
+
+    var emptyEl = document.querySelector('.comment-empty');
+    if (emptyEl) emptyEl.remove();
+
+    var now = new Date();
+    var timeStr = now.getFullYear() + '-' +
+      String(now.getMonth() + 1).padStart(2, '0') + '-' +
+      String(now.getDate()).padStart(2, '0') + ' ' +
+      String(now.getHours()).padStart(2, '0') + ':' +
+      String(now.getMinutes()).padStart(2, '0');
+
+    var commentEl = document.createElement('div');
+    commentEl.className = 'comment is-new';
+    commentEl.innerHTML =
+      '<div class="comment-head">' +
+        '<span class="comment-nickname">' + escapeHtml(nickname) + ' <span class="comment-new-badge">New</span></span>' +
+        '<span class="comment-time">' + timeStr + '</span>' +
+      '</div>' +
+      '<p class="comment-content">' + escapeHtml(content) + '</p>';
+
+    var list = document.querySelector('.comment-list');
+    list.insertBefore(commentEl, list.firstChild);
+
+    document.querySelector('.comment-success').classList.add('show');
+
+    nicknameEl.value = '';
+    contentEl.value = '';
+
+    var count = document.querySelectorAll('.comment-list .comment').length;
+    document.querySelector('.comments-count').textContent = '(' + count + ' \u6761\u8bc4\u8bba)';
+  });
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>My Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 17px; }
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: #faf8f5;
+    color: #2c2416;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* ── Nav ── */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,248,245,0.88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e8e0d5;
+    padding: 0.75rem 1.5rem;
+  }
+  .nav-inner {
+    max-width: 960px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .nav-name { font-weight: 600; font-size: 1.05rem; letter-spacing: 0.02em; color: #2c2416; text-decoration: none; }
+  .nav-links { display: flex; gap: 1.75rem; align-items: center; list-style: none; }
+  .nav-links a { text-decoration: none; color: #6b5e4a; font-size: 0.92rem; transition: color 0.2s; }
+  .nav-links a:hover { color: #b8753e; }
+  .nav-admin-link { font-size: 0.85rem; color: #b8753e !important; opacity: 0.7; }
+  .nav-admin-link:hover { opacity: 1; }
+
+  /* ── Hero ── */
+  .hero {
+    padding: 5rem 1.5rem 4.5rem;
+    text-align: center;
+    max-width: 700px; margin: 0 auto;
+  }
+  .hero-quote {
+    font-size: 1.6rem; font-weight: 300; line-height: 1.8;
+    color: #3d3226; letter-spacing: 0.04em;
+    position: relative;
+  }
+  .hero-quote::before {
+    content: '"';
+    position: absolute; left: -1.2rem; top: -0.4rem;
+    font-size: 4rem; color: #d4c4ac; font-weight: 600; line-height: 1;
+  }
+  .hero-divider {
+    width: 3rem; height: 1px; background: #d4c4ac;
+    margin: 2rem auto 1.5rem;
+  }
+  .hero-name { font-size: 1.25rem; font-weight: 500; color: #5a4a32; }
+  .hero-location { font-size: 0.92rem; color: #9a8b72; margin-top: 0.3rem; }
+
+  /* ── About ── */
+  #about { padding: 3rem 1.5rem; max-width: 580px; margin: 0 auto; }
+  .section-label { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: #b8753e; margin-bottom: 1rem; font-weight: 500; }
+  .about-desc { font-size: 1.05rem; color: #4a3f2f; margin-bottom: 1.5rem; line-height: 1.8; }
+  .about-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .about-link {
+    display: inline-flex; align-items: center; gap: 0.4rem;
+    color: #6b5e4a; text-decoration: none; font-size: 0.95rem;
+    border-bottom: 1px dashed #d4c4ac; padding-bottom: 0.15rem;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .about-link:hover { color: #b8753e; border-color: #b8753e; }
+
+  /* ── Works ── */
+  #works { padding: 2rem 1.5rem 4rem; max-width: 940px; margin: 0 auto; }
+  .works-section { margin-bottom: 3.5rem; }
+  .works-section-header {
+    display: flex; align-items: baseline; gap: 1rem; margin-bottom: 1.75rem;
+    padding-bottom: 0.6rem; border-bottom: 1px solid #e8e0d5;
+  }
+  .works-section-title { font-size: 1.2rem; font-weight: 600; color: #2c2416; }
+  .works-section-cn { font-size: 0.88rem; color: #9a8b72; font-weight: 400; font-style: italic; }
+
+  .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  .card {
+    background: #ffffff; border-radius: 4px;
+    border: 1px solid #ebe5d9;
+    overflow: hidden;
+    text-decoration: none; color: inherit;
+    transition: transform 0.25s, box-shadow 0.25s;
+    display: flex; flex-direction: column;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(60,40,20,0.08); }
+  .card-cover {
+    width: 100%; aspect-ratio: 16 / 10; display: block;
+    background: linear-gradient(135deg, #e8dcc8 0%, #d9c9a8 40%, #c4b393 100%);
+  }
+  img.card-cover { object-fit: cover; background: none; }
+  .card-body { padding: 1rem 1.15rem 1.15rem; flex: 1; display: flex; flex-direction: column; }
+  .card-title { font-size: 1rem; font-weight: 600; color: #2c2416; margin-bottom: 0.35rem; }
+  .card-desc { font-size: 0.85rem; color: #6b5e4a; line-height: 1.55; margin-bottom: 0.75rem; flex: 1; }
+  .card-meta { display: flex; justify-content: space-between; align-items: center; }
+  .card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .card-tag { font-size: 0.72rem; background: #f5efe4; color: #8b6f47; padding: 0.15rem 0.55rem; border-radius: 2px; }
+  .card-year { font-size: 0.78rem; color: #b0a38c; }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center; padding: 2.5rem 1.5rem;
+    border-top: 1px solid #e8e0d5;
+    font-size: 0.82rem; color: #b0a38c;
+  }
+  footer a { color: #8b6f47; text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ── Mobile ── */
+  @media (max-width: 720px) {
+    html { font-size: 15px; }
+    .hero { padding: 3rem 1.25rem 2.5rem; }
+    .hero-quote { font-size: 1.3rem; }
+    .hero-quote::before { left: -0.8rem; font-size: 3rem; }
+    .card-grid { grid-template-columns: 1fr; }
+    .nav-inner { flex-direction: column; gap: 0.35rem; }
+    .nav-links { gap: 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-name">MY SITE</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#works">Works</a></li>
+      <li><a href="login.html" class="nav-admin-link">Admin</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero">
+  <p class="hero-quote">在代码的严谨里造梦，在书页的留白处思考，用镜头捕捉人间，用笔尖还原文火。</p>
+  <div class="hero-divider"></div>
+  <p class="hero-name">黄启贺</p>
+  <p class="hero-location">中国·山东</p>
+</header>
+
+<section id="about">
+  <p class="section-label">About</p>
+  <p class="about-desc">
+    敲代码，写文章，按快门——用这三种方式记录我眼中的世界。<br />
+    相信好的作品诞生于安静的时刻，用技术构建体验，用文字记录思考，用镜头捕捉光影。
+  </p>
+  <div class="about-links">
+    <a href="https://github.com/qimingxing26" class="about-link">GitHub</a>
+    <a href="mailto:2053982446@qq.com" class="about-link">Email</a>
+  </div>
+</section>
+
+<section id="works">
+  <!-- 项目 Projects -->
+  <div class="works-section">
+    <div class="works-section-header">
+      <span class="works-section-title">Projects</span>
+      <span class="works-section-cn">项目</span>
+    </div>
+    <div class="card-grid">
+      <a href="project-homepage.html" class="card">
+        <img class="card-cover" src="../public/covers/个人主页.png" alt="个人主页" />
+        <div class="card-body">
+          <p class="card-title">个人主页</p>
+          <p class="card-desc">带评论功能的个人作品展示网站，按分类展示项目、文章、摄影。</p>
+          <div class="card-meta">
+            <div class="card-tags"><span class="card-tag">Full Stack</span><span class="card-tag">React</span><span class="card-tag">TypeScript</span></div>
+            <span class="card-year">2026</span>
+          </div>
+        </div>
+      </a>
+      <a href="project-ai-xiaozhi.html" class="card">
+        <img class="card-cover" src="../public/covers/ai小智.jpg" alt="ai小智" />
+        <div class="card-body">
+          <p class="card-title">ai小智</p>
+          <p class="card-desc">基于 ESP32 的 AI 语音交互桌面机器人，支持语音控制与动作反馈。</p>
+          <div class="card-meta">
+            <div class="card-tags"><span class="card-tag">IoT</span><span class="card-tag">ESP32</span><span class="card-tag">AI</span></div>
+            <span class="card-year">2026</span>
+          </div>
+        </div>
+      </a>
+      <a href="project-smart-cup.html" class="card">
+        <img class="card-cover" src="../public/covers/智能水杯.webp" alt="智能水杯" />
+        <div class="card-body">
+          <p class="card-title">智能水杯</p>
+          <p class="card-desc">基于 STC89C52 的水温自动检测与控制系统，支持预设温度与超限报警。</p>
+          <div class="card-meta">
+            <div class="card-tags"><span class="card-tag">IoT</span><span class="card-tag">单片机</span><span class="card-tag">嵌入式</span></div>
+            <span class="card-year">2026</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 文章 Articles -->
+  <div class="works-section">
+    <div class="works-section-header">
+      <span class="works-section-title">Articles</span>
+      <span class="works-section-cn">文章</span>
+    </div>
+    <div class="card-grid">
+      <a href="project-ninan.html" class="card">
+        <img class="card-cover" src="../public/covers/呢喃.webp" alt="呢喃" />
+        <div class="card-body">
+          <p class="card-title">呢喃</p>
+          <p class="card-desc">一篇关于雪狐与冰川的寓言故事，借小狐之眼见证家园消逝，呼唤环保意识。</p>
+          <div class="card-meta">
+            <div class="card-tags"><span class="card-tag">寓言</span><span class="card-tag">环保</span><span class="card-tag">文学</span></div>
+            <span class="card-year">2026</span>
+          </div>
+        </div>
+      </a>
+      <a href="project-taohua.html" class="card">
+        <img class="card-cover" src="../public/covers/桃花灼灼.webp" alt="桃花灼灼，君知我" />
+        <div class="card-body">
+          <p class="card-title">桃花灼灼，君知我</p>
+          <p class="card-desc">一个孤独琴者与桃花林中挚友的故事，关于友情、信任与被理解。</p>
+          <div class="card-meta">
+            <div class="card-tags"><span class="card-tag">友情</span><span class="card-tag">古琴</span><span class="card-tag">文学</span></div>
+            <span class="card-year">2026</span>
+          </div>
+        </div>
+      </a>
+      <a href="project-zhuiyi.html" class="card">
+        <img class="card-cover" src="../public/covers/追忆.webp" alt="追忆" />
+        <div class="card-body">
+          <p class="card-title">追忆</p>
+          <p class="card-desc">循着红色历史长河，追忆中国共产党百年征程，从南湖红船到脱贫攻坚。</p>
+          <div class="card-meta">
+            <div class="card-tags"><span class="card-tag">历史</span><span class="card-tag">红色</span><span class="card-tag">爱国</span></div>
+            <span class="card-year">2026</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- 摄影 Photography -->
+  <div class="works-section">
+    <div class="works-section-header">
+      <span class="works-section-title">Photography</span>
+      <span class="works-section-cn">摄影</span>
+    </div>
+    <div class="card-grid">
+      <a href="project-photo-sky.html" class="card">
+        <img class="card-cover" src="../public/covers/光遇.jpg" alt="光遇" />
+        <div class="card-body">
+          <p class="card-title">光遇</p>
+          <p class="card-desc">在《光·遇》里与朋友探索冒险，从伊甸试炼到欧若拉演唱会，每一帧都是珍贵回忆。</p>
+          <div class="card-meta">
+            <div class="card-tags"><span class="card-tag">游戏摄影</span><span class="card-tag">光遇</span><span class="card-tag">友谊</span></div>
+            <span class="card-year">2026</span>
+          </div>
+        </div>
+      </a>
+      <a href="project-photo-school.html" class="card">
+        <img class="card-cover" src="../public/covers/学校的风景.jpg" alt="学校的风景" />
+        <div class="card-body">
+          <p class="card-title">学校的风景</p>
+          <p class="card-desc">傍晚的粉色晚霞，春天盛开的海棠花——校园日常里最温柔的底色。</p>
+          <div class="card-meta">
+            <div class="card-tags"><span class="card-tag">校园</span><span class="card-tag">风景</span><span class="card-tag">日常</span></div>
+            <span class="card-year">2026</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 黄启贺 &nbsp;&middot;&nbsp; <a href="login.html">Admin</a></p>
+</footer>
+
+</body>
+</html>

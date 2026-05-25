@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>评论管理 — My Site</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 17px; }
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: #faf8f5; color: #2c2416; line-height: 1.7;
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+
+  /* ── Header ── */
+  .admin-header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(250,248,245,0.88); backdrop-filter: blur(10px);
+    border-bottom: 1px solid #e8e0d5; padding: 0.75rem 1.5rem;
+  }
+  .header-inner {
+    max-width: 1000px; margin: 0 auto;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .header-title { font-weight: 600; font-size: 1.05rem; color: #2c2416; }
+  .header-actions { display: flex; gap: 1rem; align-items: center; }
+  .logout-btn {
+    background: none; border: 1px solid #d4cac0; border-radius: 3px;
+    padding: 0.3rem 0.9rem; font-family: inherit; font-size: 0.82rem;
+    color: #6b5e4a; cursor: pointer; transition: background 0.2s;
+  }
+  .logout-btn:hover { background: #f5efe4; }
+  .header-home { text-decoration: none; color: #6b5e4a; font-size: 0.85rem; }
+  .header-home:hover { color: #b8753e; }
+
+  /* ── Main ── */
+  .admin-main { flex: 1; max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; width: 100%; }
+
+  /* Filter bar */
+  .filter-bar { display: flex; gap: 0.75rem; align-items: center; margin-bottom: 1.75rem; flex-wrap: wrap; }
+  .filter-label { font-size: 0.88rem; color: #6b5e4a; font-weight: 500; white-space: nowrap; }
+  .filter-select {
+    padding: 0.4rem 0.7rem; border: 1px solid #d4cac0; border-radius: 3px;
+    font-family: inherit; font-size: 0.85rem; color: #2c2416; background: #fdfcfa;
+    cursor: pointer; min-width: 160px;
+  }
+  .filter-select:focus { outline: none; border-color: #b8753e; }
+  .filter-count { font-size: 0.85rem; color: #9a8b72; }
+
+  /* Toast (delete feedback) */
+  .toast {
+    display: none; position: fixed; top: 4.5rem; right: 1.5rem;
+    background: #4a6741; color: #fff; padding: 0.6rem 1.1rem; border-radius: 4px;
+    font-size: 0.88rem; z-index: 200; box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .toast.show { display: block; animation: toastIn 0.3s ease-out; }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(-0.5rem); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Comment list */
+  .comment-list { display: flex; flex-direction: column; gap: 0.75rem; }
+  .comment-row {
+    background: #ffffff; border: 1px solid #ebe5d9; border-radius: 4px;
+    padding: 1rem 1.15rem; display: flex; justify-content: space-between;
+    align-items: flex-start; gap: 1rem;
+  }
+  .comment-info { flex: 1; min-width: 0; }
+  .comment-meta-line { display: flex; gap: 0.75rem; align-items: baseline; flex-wrap: wrap; margin-bottom: 0.3rem; }
+  .comment-project {
+    font-size: 0.75rem; background: #f5efe4; color: #8b6f47;
+    padding: 0.1rem 0.5rem; border-radius: 2px; white-space: nowrap;
+  }
+  .comment-nickname { font-weight: 600; font-size: 0.92rem; color: #3d3226; }
+  .comment-time { font-size: 0.78rem; color: #b0a38c; }
+  .comment-text { font-size: 0.88rem; color: #4a3f2f; line-height: 1.55; word-break: break-word; }
+
+  .delete-btn {
+    flex-shrink: 0; background: none; border: 1px solid #e0cccc; border-radius: 3px;
+    padding: 0.3rem 0.8rem; font-family: inherit; font-size: 0.8rem;
+    color: #b55a5a; cursor: pointer; transition: all 0.2s;
+  }
+  .delete-btn:hover { background: #fef2f2; border-color: #c88; }
+
+  /* Empty state */
+  .comment-empty { text-align: center; padding: 3rem 1rem; color: #b0a38c; font-size: 0.95rem; font-style: italic; }
+
+  /* ── Delete Modal ── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0; z-index: 300;
+    background: rgba(44,36,22,0.35); align-items: center; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #ffffff; border-radius: 6px; padding: 1.75rem 1.75rem 1.5rem;
+    width: 90%; max-width: 380px; box-shadow: 0 8px 30px rgba(60,40,20,0.15);
+  }
+  .modal-title { font-size: 1.05rem; font-weight: 600; margin-bottom: 0.75rem; color: #2c2416; }
+  .modal-desc { font-size: 0.9rem; color: #6b5e4a; margin-bottom: 1.5rem; line-height: 1.55; }
+  .modal-preview {
+    background: #fdf9f3; border-left: 3px solid #e8d5c0; padding: 0.65rem 0.85rem;
+    margin-bottom: 1.5rem; font-size: 0.85rem; color: #4a3f2f; border-radius: 0 3px 3px 0;
+  }
+  .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+  .modal-cancel {
+    background: none; border: 1px solid #d4cac0; border-radius: 3px;
+    padding: 0.45rem 1.2rem; font-family: inherit; font-size: 0.88rem;
+    color: #6b5e4a; cursor: pointer; transition: background 0.2s;
+  }
+  .modal-cancel:hover { background: #f5f0e8; }
+  .modal-confirm {
+    background: #b55a5a; color: #fff; border: none; border-radius: 3px;
+    padding: 0.45rem 1.2rem; font-family: inherit; font-size: 0.88rem;
+    cursor: pointer; transition: background 0.2s;
+  }
+  .modal-confirm:hover { background: #9a4848; }
+
+  @media (max-width: 720px) {
+    html { font-size: 15px; }
+    .comment-row { flex-direction: column; align-items: stretch; }
+    .delete-btn { align-self: flex-end; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="admin-header">
+  <div class="header-inner">
+    <span class="header-title">评论管理</span>
+    <div class="header-actions">
+      <a href="index.html" class="header-home">Home</a>
+      <button class="logout-btn">退出登录</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">评论已删除</div>
+
+<!-- Main -->
+<main class="admin-main">
+  <!-- Filter -->
+  <div class="filter-bar">
+    <span class="filter-label">筛选作品：</span>
+    <select class="filter-select" id="filterSelect" onchange="filterComments()">
+      <option value="">全部作品</option>
+      <option value="个人主页">个人主页</option>
+      <option value="ai小智">ai小智</option>
+      <option value="智能水杯">智能水杯</option>
+      <option value="光遇">光遇</option>
+      <option value="学校的风景">学校的风景</option>
+      <option value="呢喃">呢喃</option>
+      <option value="桃花灼灼，君知我">桃花灼灼，君知我</option>
+      <option value="追忆">追忆</option>
+    </select>
+    <span class="filter-count">共 6 条评论</span>
+  </div>
+
+  <!-- Comment List -->
+  <div class="comment-list" id="commentList">
+    <div class="comment-row" data-id="1">
+      <div class="comment-info">
+        <div class="comment-meta-line">
+          <span class="comment-project">呢喃</span>
+          <span class="comment-nickname">小陈</span>
+          <span class="comment-time">2026-05-17 15:42</span>
+        </div>
+        <p class="comment-text">这篇寓言写得太好了，用雪狐的视角讲述环保，结尾的转折让人深思。</p>
+      </div>
+      <button class="delete-btn" onclick="openModal(this)">删除</button>
+    </div>
+    <div class="comment-row" data-id="2">
+      <div class="comment-info">
+        <div class="comment-meta-line">
+          <span class="comment-project">呢喃</span>
+          <span class="comment-nickname">阿明</span>
+          <span class="comment-time">2026-05-15 14:32</span>
+        </div>
+        <p class="comment-text">文笔细腻，冰川崩塌那段读得我心里一紧，环保主题很打动人。</p>
+      </div>
+      <button class="delete-btn" onclick="openModal(this)">删除</button>
+    </div>
+    <div class="comment-row" data-id="3">
+      <div class="comment-info">
+        <div class="comment-meta-line">
+          <span class="comment-project">桃花灼灼，君知我</span>
+          <span class="comment-nickname">网友小王</span>
+          <span class="comment-time">2026-05-14 10:20</span>
+        </div>
+        <p class="comment-text">琴音描写太美了，古琴与桃花，孤独与友谊，读完好想学古琴。</p>
+      </div>
+      <button class="delete-btn" onclick="openModal(this)">删除</button>
+    </div>
+    <div class="comment-row" data-id="4">
+      <div class="comment-info">
+        <div class="comment-meta-line">
+          <span class="comment-project">桃花灼灼，君知我</span>
+          <span class="comment-nickname">同学小李</span>
+          <span class="comment-time">2026-05-13 22:15</span>
+        </div>
+        <p class="comment-text">读到诀别信那段哭了，还好最后是温暖的结局。</p>
+      </div>
+      <button class="delete-btn" onclick="openModal(this)">删除</button>
+    </div>
+    <div class="comment-row" data-id="5">
+      <div class="comment-info">
+        <div class="comment-meta-line">
+          <span class="comment-project">追忆</span>
+          <span class="comment-nickname">历史爱好者</span>
+          <span class="comment-time">2026-05-12 16:48</span>
+        </div>
+        <p class="comment-text">以红星为线索串起百年征程，写法很有创意，读来心潮澎湃。</p>
+      </div>
+      <button class="delete-btn" onclick="openModal(this)">删除</button>
+    </div>
+    <div class="comment-row" data-id="6">
+      <div class="comment-info">
+        <div class="comment-meta-line">
+          <span class="comment-project">追忆</span>
+          <span class="comment-nickname">书友</span>
+          <span class="comment-time">2026-05-10 08:55</span>
+        </div>
+        <p class="comment-text">抗美援朝那段写得最有力量，岂曰无碑山河为碑——这句话我记下了。</p>
+      </div>
+      <button class="delete-btn" onclick="openModal(this)">删除</button>
+    </div>
+  </div>
+</main>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <h3 class="modal-title">确认删除</h3>
+    <p class="modal-desc">删除后将无法恢复，确定要删除这条评论吗？</p>
+    <div class="modal-preview" id="modalPreview"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeModal()">取消</button>
+      <button class="modal-confirm" onclick="deleteComment()">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let targetRow = null;
+
+  function openModal(btn) {
+    targetRow = btn.closest('.comment-row');
+    const text = targetRow.querySelector('.comment-text').textContent;
+    const nickname = targetRow.querySelector('.comment-nickname').textContent;
+    document.getElementById('modalPreview').textContent = nickname + '：' + text;
+    document.getElementById('modalOverlay').classList.add('show');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('show');
+    targetRow = null;
+  }
+
+  function deleteComment() {
+    if (targetRow) {
+      targetRow.remove();
+      updateCount();
+      showToast('评论已删除');
+    }
+    closeModal();
+  }
+
+  function showToast(msg) {
+    var t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(function() { t.classList.remove('show'); }, 2000);
+  }
+
+  function updateCount() {
+    var visible = document.querySelectorAll('#commentList .comment-row:not([style*="display: none"])').length;
+    document.querySelector('.filter-count').textContent = '共 ' + visible + ' 条评论';
+  }
+
+  function filterComments() {
+    var value = document.getElementById('filterSelect').value;
+    var rows = document.querySelectorAll('#commentList .comment-row');
+    rows.forEach(function(row) {
+      var project = row.querySelector('.comment-project').textContent.trim();
+      if (!value || project === value) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+    updateCount();
+  }
+
+  // Close modal on overlay click
+  document.getElementById('modalOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+</script>
+
+</body>
+</html>
